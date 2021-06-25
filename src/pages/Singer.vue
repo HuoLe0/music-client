@@ -62,33 +62,48 @@ export default {
                 console.log(err);
                 this.notify("暂无相关歌单","warning");    
             })
-            // if(this.allSingers != undefined){
-            //     this.singerDatas = this.allSingers;
-            // }
-            // else{
-            //     getAllSinger()
-            //     .then( res => {
-            //         // this.curPage = 1;
-            //         this.singerDatas = res.data;
-            //         this.$store.commit('setAllSingers',res.data);
-            //     }).catch(err => {
-            //         console.log(err);
-            //         this.notify("暂无相关歌单","warning");    
-            //     })
-            // }
         },
         //获取当前页
         handleCurrentChange(val){
             // this.curPage = val;
             this.$store.commit('setCurPage',val);
-            getSingerByPager(this.curPage, this.pageSize)
-            .then( res => {
-                this.singerDatas = res.data.rows;
-                this.totalNum = res.data.total;
-            }).catch( err => {
-                console.log(err);
-                this.notify("暂无相关歌单","warning");    
-            })
+            if(this.activeName == "全部歌手"){
+                getSingerByPager(this.curPage, this.pageSize)
+                .then( res => {
+                    this.singerDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err);
+                    this.notify("暂无相关歌单","warning");    
+                })
+            }
+            else if(this.activeName == "男歌手"){
+                getSingerOfSex("1", this.curPage, this.pageSize)
+                .then( res => {
+                    this.singerDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == "女歌手"){
+                getSingerOfSex("0", this.curPage, this.pageSize)
+                .then( res => {
+                    this.singerDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else{
+                getSingerOfSex("2", this.curPage, this.pageSize)
+                .then( res => {
+                    this.singerDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
         },
         //根据style查询对应歌手
         handleChangeView(item){
@@ -102,10 +117,11 @@ export default {
         },
         //根据性别查询歌手
         goSingerOfSex(sex){
-            getSingerOfSex(sex).then( res => {
+            getSingerOfSex(sex, this.curPage, this.pageSize).then( res => {
                 // this.curPage = 1;
-                this.$store.commit('setCurPage',1);
-                this.singerDatas = res.data;
+                // this.$store.commit('setCurPage',1);
+                this.singerDatas = res.data.rows;
+                this.totalNum = res.data.total;
             }).catch( err => {
                 console.log(err)
             })

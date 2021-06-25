@@ -10,14 +10,14 @@
             <content-list :contentList="data"></content-list>
             <div class="pagination">
                 <el-pagination @current-change="handleCurrentChange" background layout="total,prev,pager,next"
-                :current-page="curPage" :page-size="pageSize" :total="albumDatas.length"></el-pagination>
+                :current-page="curPage" :page-size="pageSize" :total="totalNum"></el-pagination>
             </div>
         </div>
     </div>
 </template>
 <script>
 import ContentList from '../components/ContentList';
-import {getAllSongList, likeStyle, likeTitle} from '../api/index';
+import {getSongListByPager, likeStyle} from '../api/index';
 import {mixin} from '../mixins/index';
 import {songStyle} from '../assets/data/songList';
 import {mapGetters} from 'vuex';
@@ -34,12 +34,13 @@ export default {
             currentPage: 1, //当前页，默认第一页
             songStyle: [], //歌单风格
             activeName: '', //当前风格
+            totalNum: 0,//总数量
         }
     },
     computed:{
         //计算当前表格中的数据
         data(){
-            return this.albumDatas.slice((this.curPage - 1) * this.pageSize,this.curPage * this.pageSize)
+            return this.albumDatas;
         },
         ...mapGetters([
             'curPage',//当前页面
@@ -53,26 +54,115 @@ export default {
     },
     methods:{
         getSongList(){
-            if(this.allSongLists != undefined){
-                this.albumDatas = this.allSongLists;
-            }
-            else{
-                getAllSongList()
-                    .then( res => {
-                        // this.$store.commit('setCurPage',1);
-                        this.albumDatas = res.data;
-                        this.$store.commit('setAllSongLists',res);
-                    }).catch(err => {
-                        console.log(err);
-                        this.notify("暂无相关歌单","warning");    
-                })
-            }
-            
+            getSongListByPager(this.curPage, this.pageSize)
+            .then( res => {
+                // this.$store.commit('setCurPage',1);
+                this.albumDatas = res.data.rows;
+                this.totalNum = res.data.total;
+                this.$store.commit('setAllSongLists',res);
+            }).catch(err => {
+                console.log(err);
+                this.notify("暂无相关歌单","warning");    
+            })
         },
         //获取当前页
         handleCurrentChange(val){
             // this.curPage = val;
             this.$store.commit('setCurPage',val);
+            if(this.activeName == '全部歌单'){
+                getSongListByPager(this.curPage, this.pageSize)
+                .then( res => {
+                    this.$store.commit('setCurPage',1);
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                    this.$store.commit('setAllSongLists',res);
+                }).catch(err => {
+                    console.log(err);
+                    this.notify("暂无相关歌单","warning");    
+                })
+            }
+            else if(this.activeName == '华语'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == '粤语'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == '欧美'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == '日韩'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == '轻音乐'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == 'BGM'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == '乐器'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == 'R&B'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            else if(this.activeName == '影视'){
+                likeStyle(this.activeName, this.curPage, this.pageSize)
+                .then( res => {
+                    this.albumDatas = res.data.rows;
+                    this.totalNum = res.data.total;
+                }).catch( err => {
+                    console.log(err)
+                })
+            }
+            
         },
         //根据style查询对应歌单
         handleChangeView(name){
@@ -86,9 +176,11 @@ export default {
         },
         //根据style查询
         goSongListOfStyle(style){
-            likeStyle(style).then( res => {
-                this.$store.commit('setCurPage',1);
-                this.albumDatas = res.data;
+            likeStyle(style, this.curPage, this.pageSize)
+            .then( res => {
+                // this.$store.commit('setCurPage',1);
+                this.albumDatas = res.data.rows;
+                this.totalNum = res.data.total;
             }).catch( err => {
                 console.log(err)
             })

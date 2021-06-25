@@ -12,7 +12,7 @@
 
 <script>
 import {swiperList} from '../assets/data/swiper';
-import {getAllSinger,getAllSongList} from '../api/index';
+import {getRandomSongList} from '../api/index';
 import {mapGetters} from 'vuex';
 import {mixin} from '../mixins/index';
 export default {
@@ -35,18 +35,8 @@ export default {
     },
     methods:{
         getSongList(){//获取前十条歌单
-            getAllSongList().then(res =>{
-                res = res.data;
-                this.$store.commit('setAllSongLists',res);
-                let r = Math.floor(Math.random(0.1,1) * res.length);
-                if(r>15){
-                    this.songList = res.slice(r-15,r);
-                    
-                }else{
-                    this.songList = res.slice(r,r+15);
-                    
-                }
-                // console.log(res.slice(r-10,r))
+            getRandomSongList().then(res =>{             
+                this.songList = res.data;
             }).catch(err => {
                 console.log(err);
             })

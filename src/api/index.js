@@ -16,7 +16,7 @@ export const getSingerByPager = (page,size) => get(`singer/selectByPager?page=${
 
 
 //歌手性别
-export const getSingerOfSex = (sex) => get(`singer/selectBySex?sex=${sex}`);
+export const getSingerOfSex = (sex,page,size) => get(`singer/selectBySex?sex=${sex}&page=${page}&size=${size}`);
 
 //歌手名
 export const getSingerOfName = (name) => get(`singer/selectByName?name=${name}`);
@@ -68,8 +68,14 @@ export const getAllSongList = () => get(`songList/selectAll`);
 //用户全部歌单
 export const getAllConsumerSongList = (userId) => get(`songList/selectAllConsumer?userId=${userId}`);
 
-//全部歌单
+//分页歌单
+export const getSongListByPager = (page,size) => get(`songList/selectByPager?page=${page}&size=${size}`);
+
+//前十个歌单
 export const getTenSongList = () => get(`songList/selectTen`);
+
+//随机歌单
+export const getRandomSongList = () => get(`songList/selectRandom`);
 
 //添加歌单
 export const setSongList = (params) => post(`songList/add`,params);
@@ -94,7 +100,7 @@ export const songListOfId = (id) => get(`songList/selectById?id=${id}`);
 export const likeTitle = (title) => get(`songList/selectLikeTitle?title=${title}`);
 
 //根据风格模糊查询歌单
-export const likeStyle = (style) => get(`songList/selectLikeStyle?style=${style}`);
+export const likeStyle = (style,page,size) => get(`songList/selectLikeStyle?style=${style}&page=${page}&size=${size}`);
 
 
 //全部歌单歌曲
